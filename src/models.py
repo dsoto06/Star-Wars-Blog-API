@@ -10,7 +10,7 @@ class Users(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.name
 
     def serialize(self):
         return {
@@ -59,7 +59,7 @@ class Planets(db.Model):
     population = db.Column(db.Integer, unique=False, nullable=False)
     climate = db.Column(db.String(250), unique=True, nullable=False)
     terrain = db.Column(db.String(250), unique=True, nullable=False)
-    surface_water = db.Column(db.Integer, unique=False, nullable=False)
+    surface_water = db.Column(db.Boolean, unique=False, nullable=False)
 
     def __repr__(self):
         return '<Planets %r>' % self.name
@@ -84,11 +84,11 @@ class Favorites(db.Model):
     # Here we define columns for the table address.
     id = db.Column(db.Integer, primary_key=True)
     planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'), nullable=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=True)
+    characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=True)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     planets = db.relationship('Planets')
     users = db.relationship('Users')
-    characters = db.relationship('Planets')
+    characters = db.relationship('Characters')
 
     def __repr__(self):
         return '<Favorites %r>' % self.name
@@ -97,7 +97,7 @@ class Favorites(db.Model):
         return {
             "id": self.id,
             "planets_id": self.planets_id,
-            "character_id": self.character_id,
+            "characters_id": self.characters_id,
             "users_id": self.users_id,
            
             # do not serialize the password, its a security breach
