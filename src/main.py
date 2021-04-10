@@ -97,6 +97,42 @@ def getFavorites():
     return jsonify(all_favorites), 200
 
 
+@app.route('/users/<int:u_id>/favorites/', methods=['GET'])
+def getUserFavoritesId(u_id):
+
+    users = Users.query.filter_by(id=u_id).first()
+    if users is None:
+        raise APIException('Favorite user does not exist', status_code=405)
+    fav = Favorites.query.filter_by(users_id = u_id)
+    result = list(map(lambda x: x.serialize(), fav))
+    return jsonify(result), 200
+
+
+@app.route('/user/<int:u_id>/favorites/', methods=['POST'])
+def postUserFavorites(u_id):
+
+    request_body = request.get_json()
+    fav = Favorites(name=request_body["name"], user_id=request_body["user_id"], planet_id=request_body["planet_id"], character_id=request_body["people_id"],)
+
+    db.session.add(fav)
+    db.session.commit()
+
+    return jsonify("Success!"), 200
+
+@app.route('/delete_fav/<int:f_id>', methods=['DELETE'])
+def delFav(f_id):
+
+    fav = Favorites.query.get(f_id)
+
+    if fav is None:
+        raise APIException('Favorite not found', status_code=404)
+    db.session.delete(fav)
+    db.session.commit()
+
+    return jsonify("Successfully deleted!"), 200
+
+
+
 
 
 
